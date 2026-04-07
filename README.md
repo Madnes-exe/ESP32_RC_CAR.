@@ -19,7 +19,6 @@ kątem skrętu (serwo)
 Zasilanie z baterii 7.4V + przetwornica step-down do 5V
 
 Technologie i komponenty:
-
 ESP32-S3 
 Kamera OV2640
 Mostek L298N 
@@ -31,7 +30,6 @@ Wi-Fi (tryb Access Point + HTTP server)
 Architektura systemu:
 
 Hardware:
-
 ESP32-S3
 Kamera
 Silnik DC + mostek H
@@ -39,14 +37,12 @@ Serwo
 Zasilanie (7.4V → 5V)
 
 Firmware (ESP32):
-
 Serwer HTTP
 Obsługa kamery (stream)
 Sterowanie PWM (silnik) 
 Obsługa żądań z przeglądarki
 
 Frontend:
-
 Strona WWW (hostowana na ESP32)
 Podgląd wideo
 Suwaki sterujące
