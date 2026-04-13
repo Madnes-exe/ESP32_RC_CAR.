@@ -49,7 +49,7 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 **Frontend:** Strona WWW hostowana na ESP32 · Podgląd wideo na żywo · Wirtualny joystick 
 
-![Webpage_Interface](Webpage_Interface.png)
+<img src="Webpage_Interface.png" width="500">
 
 ---
 
