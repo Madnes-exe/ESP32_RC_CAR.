@@ -1,7 +1,7 @@
 # 🚗 Samochodzik RC z Kamerą
 
 Autonomiczny samochodzik RC sterowany przez Wi-Fi, oparty o mikrokontroler ESP32-S3 z wbudowaną obsługą kamery. Umożliwia zdalne sterowanie pojazdem przez przeglądarkę internetową oraz podgląd obrazu w czasie rzeczywistym.
-
+🏗️ Architektura systemu:
 ![System Architecture](System_Architecture_RC_CAR.png)
 
 ---
@@ -43,37 +43,7 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 **Firmware (ESP32):** Serwer HTTP · Obsługa kamery (stream) · Sterowanie PWM (silnik) · Obsługa żądań z przeglądarki
 
-**Frontend:** Strona WWW hostowana na ESP32 · Podgląd wideo na żywo · Wirtualny joystick / suwaki sterujące
-
----
-
-## 🚀 Uruchomienie
-
-### Wymagania
-
-- [Arduino IDE](https://www.arduino.cc/en/software) lub PlatformIO
-- Biblioteki:
-  - `ESP32 Arduino Core`
-  - `ESP32Servo`
-  - `ESPAsyncWebServer`
-
-### Instalacja
-
-1. Sklonuj repozytorium:
-   ```bash
-   git clone https://github.com/Madnes-exe/Samochodzik-RC-z-Kamerk-.git
-   cd Samochodzik-RC-z-Kamerk-
-   ```
-
-2. Otwórz `ESP32_RC_CAR.ino` w Arduino IDE.
-
-3. Wgraj szkic na płytkę ESP32-S3.
-
-4. Połącz się z siecią Wi-Fi:
-   - **SSID:** `RC_CAR_AP` *(lub zgodnie z konfiguracją w kodzie)*
-   - **Hasło:** *(sprawdź w kodzie)*
-
-5. Otwórz przeglądarkę i wejdź pod adres `192.168.4.1`.
+**Frontend:** Strona WWW hostowana na ESP32 · Podgląd wideo na żywo · Wirtualny joystick 
 
 ---
 
