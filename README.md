@@ -1,6 +1,7 @@
 # 🚗 Samochodzik RC z Kamerą
 
 Autonomiczny samochodzik RC sterowany przez Wi-Fi, oparty o mikrokontroler ESP32-S3 z wbudowaną obsługą kamery. Umożliwia zdalne sterowanie pojazdem przez przeglądarkę internetową oraz podgląd obrazu w czasie rzeczywistym.
+
 🏗️ Architektura systemu:
 ![System Architecture](System_Architecture_RC_CAR.png)
 
