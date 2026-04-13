@@ -4,7 +4,7 @@ Autonomiczny samochodzik RC sterowany przez Wi-Fi, oparty o mikrokontroler ESP32
 
 ## 🏗️ Architektura systemu:
 
-<img src="System_Architecture_RC_CAR.png" width="600">
+<img src="System_Architecture_RC_CAR.png" width="800">
 
 ---
 
@@ -43,7 +43,7 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 **Hardware:** ESP32-S3 · Silnik DC + mostek H · Serwo · Zasilanie (7.4V → 5V)
 
-<img src="RC_CAR_PHOTO.png" width="500">
+<img src="RC_CAR_PHOTO.png" width="700">
 
 **Firmware (ESP32):** Serwer HTTP · Obsługa kamery (stream) · Sterowanie PWM (silnik) · Obsługa żądań z przeglądarki
 
