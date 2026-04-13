@@ -1,31 +1,31 @@
-# 🚗 Samochodzik RC z Kamerą
+#  Samochodzik RC z Kamerą
 
 Autonomiczny samochodzik RC sterowany przez Wi-Fi, oparty o mikrokontroler ESP32-S3 z wbudowaną obsługą kamery. Umożliwia zdalne sterowanie pojazdem przez przeglądarkę internetową oraz podgląd obrazu w czasie rzeczywistym.
 
-## 🏗️ Architektura systemu:
+##  Architektura systemu:
 
 <img src="System_Architecture_RC_CAR.png" width="800">
 
 ---
 
-## 📋 Opis projektu
+##  Opis projektu
 
 Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany za pomocą mostka H (L298N), oraz serwomechanizm do kontroli skrętu przednich kół. ESP32 działa jako punkt dostępu (Access Point) — użytkownik łączy się smartfonem/komputerem i steruje pojazdem przez interfejs webowy z joystickiem (jazda przód/tył oraz skręt lewo/prawo).
 
 ---
 
-## ✨ Funkcjonalności
+##  Funkcjonalności
 
-- 📡 Sterowanie pojazdem przez Wi-Fi (ESP32 jako Access Point)
-- 🌐 Strona WWW hostowana bezpośrednio na ESP32
-- 📷 Streaming obrazu z kamery w czasie rzeczywistym
-- 🎮 Sterowanie prędkością (PWM, mostek H), kierunkiem jazdy i kątem skrętu (serwo)
-- 🔋 Zasilanie z baterii 7.4V + przetwornica step-down do 5V
-- ⚡ FreeRTOS — podział pracy procesora na dwa zadania (odbiór danych z WebSocketa + sterowanie pojazdem)
+-  Sterowanie pojazdem przez Wi-Fi (ESP32 jako Access Point)
+-  Strona WWW hostowana bezpośrednio na ESP32
+-  Streaming obrazu z kamery w czasie rzeczywistym
+-  Sterowanie prędkością (PWM, mostek H), kierunkiem jazdy i kątem skrętu (serwo)
+-  Zasilanie z baterii 7.4V + przetwornica step-down do 5V
+-  FreeRTOS — podział pracy procesora na dwa zadania (odbiór danych z WebSocketa + sterowanie pojazdem)
 
 ---
 
-## 🛠️ Technologie i komponenty
+##  Technologie i komponenty
 
 | Kategoria | Szczegóły |
 |-----------|-----------|
@@ -53,7 +53,7 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 ---
 
-## 📊 Osiągi
+##  Osiągi
 
 | Parametr | Wartość |
 |----------|---------|
@@ -64,7 +64,7 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 ---
 
-## 👤 Autor
+##  Autor
 
 **Radosław Dregan** — Student Automatyki i Robotyki, Politechnika Śląska
 
