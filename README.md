@@ -1,50 +1,107 @@
-# Samochodzik-RC-z-Kamerk-
-OPIS:
+# 🚗 Samochodzik RC z Kamerą
 
-Projekt autonomicznego samochodzika RC sterowanego przez Wi-Fi, opartego o mikrokontroler ESP32-S3 z wbudowaną obsługą kamery.
-System umożliwia zdalne sterowanie pojazdem poprzez przeglądarkę internetową oraz podgląd obrazu w czasie rzeczywistym
-Samochód wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany za pomocą mostka H, oraz serwomechanizm 
-do kontroli skrętu przednich kół. ESP32 działa jako punkt dostępowy (Access Point), do którego użytkownik łączy się 
-za pomocą smartfona. Interfejs webowy umożliwia sterowanie pojazdem za pomocą dwóch suwaków (jazda przód/tył oraz skręt lewo/prawo).
+Autonomiczny samochodzik RC sterowany przez Wi-Fi, oparty o mikrokontroler ESP32-S3 z wbudowaną obsługą kamery. Umożliwia zdalne sterowanie pojazdem przez przeglądarkę internetową oraz podgląd obrazu w czasie rzeczywistym.
 
-Kluczowe funkcjonalności:
+![System Architecture](System_Architecture_RC_CAR.png)
 
-Sterowanie pojazdem przez Wi-Fi (ESP32 jako Access Point)
-Strona WWW hostowana na ESP32
-Streaming obrazu z kamery w czasie rzeczywistym
-Sterowanie:
-prędkością (PWM, mostek H)
-kierunkiem jazdy
-kątem skrętu (serwo)
-Zasilanie z baterii 7.4V + przetwornica step-down do 5V
+---
 
-Technologie i komponenty:
-ESP32-S3 
-Kamera OV2640
-Mostek L298N 
-Serwomechanizm MG-90S
-Przetwornica DC-DC (step-down)
-HTML / CSS / JavaScript (interfejs webowy)
-Wi-Fi (tryb Access Point + HTTP server)
+## 📋 Opis projektu
 
-Architektura systemu:
+Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany za pomocą mostka H (L298N), oraz serwomechanizm do kontroli skrętu przednich kół. ESP32 działa jako punkt dostępu (Access Point) — użytkownik łączy się smartfonem/komputerem i steruje pojazdem przez interfejs webowy z joystickiem (jazda przód/tył oraz skręt lewo/prawo).
 
-Hardware:
-ESP32-S3
-Kamera
-Silnik DC + mostek H
-Serwo
-Zasilanie (7.4V → 5V)
+---
 
-Firmware (ESP32):
-Serwer HTTP
-Obsługa kamery (stream)
-Sterowanie PWM (silnik) 
-Obsługa żądań z przeglądarki
+## ✨ Funkcjonalności
 
-Frontend:
-Strona WWW (hostowana na ESP32)
-Podgląd wideo
-Suwaki sterujące
+- 📡 Sterowanie pojazdem przez Wi-Fi (ESP32 jako Access Point)
+- 🌐 Strona WWW hostowana bezpośrednio na ESP32
+- 📷 Streaming obrazu z kamery w czasie rzeczywistym
+- 🎮 Sterowanie prędkością (PWM, mostek H), kierunkiem jazdy i kątem skrętu (serwo)
+- 🔋 Zasilanie z baterii 7.4V + przetwornica step-down do 5V
+- ⚡ FreeRTOS — podział pracy procesora na dwa zadania (odbiór danych z WebSocketa + sterowanie pojazdem)
 
+---
+
+## 🛠️ Technologie i komponenty
+
+| Kategoria | Szczegóły |
+|-----------|-----------|
+| Mikrokontroler | ESP32-S3 |
+| Kamera | OV2640 |
+| Sterownik silnika | Mostek H L298N |
+| Serwomechanizm | MG-90S |
+| Zasilanie | Akumulator Li-Ion 7.4V + przetwornica DC-DC (step-down 5V) |
+| Frontend | HTML / CSS / JavaScript (wirtualny joystick) |
+| Komunikacja | Wi-Fi (Access Point + HTTP server + WebSocket) |
+| RTOS | FreeRTOS |
+
+---
+
+
+**Hardware:** ESP32-S3 · Silnik DC + mostek H · Serwo · Zasilanie (7.4V → 5V)
+
+**Firmware (ESP32):** Serwer HTTP · Obsługa kamery (stream) · Sterowanie PWM (silnik) · Obsługa żądań z przeglądarki
+
+**Frontend:** Strona WWW hostowana na ESP32 · Podgląd wideo na żywo · Wirtualny joystick / suwaki sterujące
+
+---
+
+## 🚀 Uruchomienie
+
+### Wymagania
+
+- [Arduino IDE](https://www.arduino.cc/en/software) lub PlatformIO
+- Biblioteki:
+  - `ESP32 Arduino Core`
+  - `ESP32Servo`
+  - `ESPAsyncWebServer`
+
+### Instalacja
+
+1. Sklonuj repozytorium:
+   ```bash
+   git clone https://github.com/Madnes-exe/Samochodzik-RC-z-Kamerk-.git
+   cd Samochodzik-RC-z-Kamerk-
+   ```
+
+2. Otwórz `ESP32_RC_CAR.ino` w Arduino IDE.
+
+3. Wgraj szkic na płytkę ESP32-S3.
+
+4. Połącz się z siecią Wi-Fi:
+   - **SSID:** `RC_CAR_AP` *(lub zgodnie z konfiguracją w kodzie)*
+   - **Hasło:** *(sprawdź w kodzie)*
+
+5. Otwórz przeglądarkę i wejdź pod adres `192.168.4.1`.
+
+---
+
+## 📊 Osiągi
+
+| Parametr | Wartość |
+|----------|---------|
+| Prędkość maksymalna | ~9 km/h |
+| Masa pojazdu | ~340 g |
+| Zasięg Wi-Fi | do 50 m |
+| Zasięg transmisji wideo | do 20 m |
+
+---
+
+## 📁 Struktura plików
+
+```
+├── ESP32_RC_CAR.ino          # Główny plik firmware
+├── webpage.h                 # Interfejs webowy (HTML/CSS/JS)
+├── System_Architecture_RC_CAR.png  # Diagram architektury
+└── README.md
+```
+
+---
+
+## 👤 Autor
+
+**Radosław Dregan** — Student Automatyki i Robotyki, Politechnika Śląska
+
+[![GitHub](https://img.shields.io/badge/GitHub-Madnes--exe-181717?logo=github)](https://github.com/Madnes-exe)
 
