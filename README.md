@@ -43,9 +43,13 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 **Hardware:** ESP32-S3 · Silnik DC + mostek H · Serwo · Zasilanie (7.4V → 5V)
 
+![RC_CAR_PHOTO](RC_CAR_PHOTO.png)
+
 **Firmware (ESP32):** Serwer HTTP · Obsługa kamery (stream) · Sterowanie PWM (silnik) · Obsługa żądań z przeglądarki
 
 **Frontend:** Strona WWW hostowana na ESP32 · Podgląd wideo na żywo · Wirtualny joystick 
+
+![Webpage_Interface](Webpage_Interface.png)
 
 ---
 
