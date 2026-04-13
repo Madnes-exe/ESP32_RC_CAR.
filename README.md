@@ -58,17 +58,6 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 ---
 
-## 📁 Struktura plików
-
-```
-├── ESP32_RC_CAR.ino          # Główny plik firmware
-├── webpage.h                 # Interfejs webowy (HTML/CSS/JS)
-├── System_Architecture_RC_CAR.png  # Diagram architektury
-└── README.md
-```
-
----
-
 ## 👤 Autor
 
 **Radosław Dregan** — Student Automatyki i Robotyki, Politechnika Śląska
