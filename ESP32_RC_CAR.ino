@@ -1,4 +1,4 @@
-// RC CAR WITH CAMERA - XIAO ESP32-S3 SENSE
+// RC CAR XIAO ESP32-S3 SENSE
 
 #include "esp_camera.h"
 #include <WiFi.h>
@@ -8,7 +8,7 @@
 #include <ArduinoJson.h>
 #include "webpage.h"
 
-// KONFIGURACJA KAMERY 
+// Konfiguracja kamery
 #define PWDN_GPIO_NUM     -1
 #define RESET_GPIO_NUM    -1
 #define XCLK_GPIO_NUM     10
@@ -26,17 +26,17 @@
 #define HREF_GPIO_NUM     47
 #define PCLK_GPIO_NUM     13
 
-// WIFI 
+// Ustawienia WI-FI 
 const char* ssid = "ESP32-CAM";
 const char* password = "12345678";
 
 WebServer server(80);
 WebSocketsServer webSocket(81);
 
-// SERVO, L298N & PWM 
+// Ustawienia pinów oraz wartości dla: MG90S, L298N, PWM 
 Servo servo;
 const int servoPin = 4;
-const int SERVO_LEFT = 0;    
+const int SERVO_LEFT = 0;    //wartości skrętu serwomechanizmu zostały dostowowane do ograniczeń fizycznych układu mechanicznego
 const int SERVO_CENTER = 45; 
 const int SERVO_RIGHT = 85;  
 const int ENA = 1;  
@@ -44,17 +44,17 @@ const int IN1 = 2;
 const int IN2 = 3;  
 const int pwmFreq = 1000;    
 const int pwmResolution = 8; 
-const int PWM_START_POWER = 90; 
-const int PWM_MAX = 255;
+const int PWM_START_POWER = 90; //minimalna wartość dla której silnik jest w stanie ruszyć z miejsca (napięcie 3.3V)
+const int PWM_MAX = 255;  
 
-//  ZMIENNE FREERTOS I FAILSAFE 
+// Zmienne FreeRTOS i Failsafe 
 SemaphoreHandle_t dataMutex;
 int currentSteering = 90;
 int currentSpeed = 0;
 unsigned long lastCommandTime = 0;
 const int TIMEOUT_MS = 500; 
 
-// ZADANIE FREERTOS 1: SILNIKI 
+// Zadanie 1: Sterowanie silnikiem i serwomechanizmem
 void motorTask(void *pvParameters) {
   for (;;) {
     int localSteering, localSpeed;
@@ -103,7 +103,7 @@ void motorTask(void *pvParameters) {
   }
 }
 
-// ZADANIE FREERTOS 2: WEBSOCKET 
+// Zadanie 2: Obsługa WebSocket 
 void webSocketTask(void *pvParameters) {
   for (;;) {
     webSocket.loop();
@@ -111,7 +111,6 @@ void webSocketTask(void *pvParameters) {
   }
 }
 
-// OBSŁUGA DANYCH WEBSOCKET 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   if (type == WStype_TEXT) {
     StaticJsonDocument<200> doc;
@@ -125,7 +124,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
   }
 }
 
-// STRUMIENIOWANIE KAMERY
+// Strumieniowanie Kamery
 void handleStream() {
   WiFiClient client = server.client();
   client.setNoDelay(true);
@@ -155,14 +154,13 @@ void handleStream() {
     delay(40);
   }
 }
-
-// SETUP 
+ 
 void setup() {
   Serial.begin(115200);
 
   dataMutex = xSemaphoreCreateMutex();
   lastCommandTime = millis();
-
+// Konfiguracaj ustawień kamery
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -208,7 +206,6 @@ void setup() {
   webSocket.onEvent(webSocketEvent);
 }
 
-// LOOP 
 void loop() {
   server.handleClient();
 }
