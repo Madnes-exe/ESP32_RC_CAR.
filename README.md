@@ -64,6 +64,12 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 ---
 
+## Prezentacja wideo
+
+[![Prezentacja Samochodzika RC](https://img.youtube.com/vi/uKNXrRm_Ajo/0.jpg)](https://www.youtube.com/watch?v=uKNXrRm_Ajo)
+
+---
+
 ##  Autor
 
 **Radosław Dregan** — Student Automatyki i Robotyki, Politechnika Śląska
