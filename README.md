@@ -66,7 +66,7 @@ Pojazd wykorzystuje silnik prądu stałego (DC) do napędu tylnej osi, sterowany
 
 ##  Prezentacja wideo
 
-[![Prezentacja wideo](RC_CAR_PHOTO.png)](https://www.youtube.com/watch?v=uKNXrRm_Ajo)
+[![Obejrzyj prezentację na YouTube](https://img.youtube.com/vi/uKNXrRm_Ajo/maxresdefault.jpg)](https://www.youtube.com/watch?v=uKNXrRm_Ajo)
 
 ---
 
