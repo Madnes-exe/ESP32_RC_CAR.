@@ -1,11 +1,13 @@
 // RC CAR XIAO ESP32-S3 SENSE
 
 #include "esp_camera.h"
+#include "sensor.h"         
 #include <WiFi.h>
 #include <WebServer.h>
 #include <WebSocketsServer.h>
 #include <ESP32Servo.h>
 #include <ArduinoJson.h>
+#include "esp_wifi.h"       
 #include "webpage.h"
 
 // Konfiguracja kamery
@@ -26,33 +28,68 @@
 #define HREF_GPIO_NUM     47
 #define PCLK_GPIO_NUM     13
 
-// Ustawienia WI-FI 
+// Ustawienia WI-FI
 const char* ssid = "ESP32-CAM";
 const char* password = "12345678";
 
 WebServer server(80);
 WebSocketsServer webSocket(81);
 
-// Ustawienia pinów oraz wartości dla: MG90S, L298N, PWM 
+// Ustawienia pinów oraz wartości dla: MG90S, L298N, PWM
 Servo servo;
 const int servoPin = 4;
-const int SERVO_LEFT = 0;    //wartości skrętu serwomechanizmu zostały dostowowane do ograniczeń fizycznych układu mechanicznego
-const int SERVO_CENTER = 45; 
-const int SERVO_RIGHT = 85;  
-const int ENA = 1;  
-const int IN1 = 2;  
-const int IN2 = 3;  
-const int pwmFreq = 1000;    
-const int pwmResolution = 8; 
-const int PWM_START_POWER = 90; //minimalna wartość dla której silnik jest w stanie ruszyć z miejsca (napięcie 3.3V)
-const int PWM_MAX = 255;  
+const int SERVO_LEFT = 0;
+const int SERVO_CENTER = 45;
+const int SERVO_RIGHT = 85;
+const int ENA = 1;
+const int IN1 = 2;
+const int IN2 = 3;
+const int pwmFreq = 1000;
+const int pwmResolution = 8;
+const int PWM_START_POWER = 90;
+const int PWM_MAX = 255;
 
-// Zmienne FreeRTOS i Failsafe 
+// Zmienne FreeRTOS i Failsafe
 SemaphoreHandle_t dataMutex;
 int currentSteering = 90;
 int currentSpeed = 0;
 unsigned long lastCommandTime = 0;
-const int TIMEOUT_MS = 500; 
+const int TIMEOUT_MS = 500;
+
+
+
+// Tryb sportowy kamery
+void applySportMode(bool enable) {
+  sensor_t* s = esp_camera_sensor_get();
+  if (!s) return;
+
+  if (enable) {
+    
+    s->set_aec2(s, 0);            
+    s->set_aec_value(s, 100);     
+    s->set_ae_level(s, -1);      
+    s->set_agc_gain(s, 6);       
+    s->set_gainceiling(s, (gainceiling_t)4); 
+    s->set_bpc(s, 1);             
+    s->set_wpc(s, 1);            
+    s->set_lenc(s, 0);           
+    s->set_raw_gma(s, 1);         
+    s->set_dcw(s, 1);           
+    Serial.println("[CAM] Tryb sportowy: ON");
+  } else {
+   
+    s->set_aec2(s, 1);           
+    s->set_ae_level(s, 0);      
+    s->set_agc_gain(s, 0);        
+    s->set_gainceiling(s, (gainceiling_t)2); 
+    s->set_bpc(s, 0);
+    s->set_wpc(s, 1);
+    s->set_lenc(s, 1);
+    s->set_raw_gma(s, 1);
+    s->set_dcw(s, 1);
+    Serial.println("[CAM] Tryb sportowy: OFF");
+  }
+}
 
 // Zadanie 1: Sterowanie silnikiem i serwomechanizmem
 void motorTask(void *pvParameters) {
@@ -67,10 +104,10 @@ void motorTask(void *pvParameters) {
     xSemaphoreGive(dataMutex);
 
     if (millis() - localTime > TIMEOUT_MS) {
-      localSpeed = 0; 
+      localSpeed = 0;
     }
 
-    int servoAngle = SERVO_CENTER; 
+    int servoAngle = SERVO_CENTER;
     if (localSteering < 90) {
       servoAngle = map(localSteering, 0, 90, SERVO_LEFT, SERVO_CENTER);
     } else {
@@ -80,18 +117,18 @@ void motorTask(void *pvParameters) {
     servo.write(servoAngle);
 
     int pwmValue = 0;
-    int deadzone = 25; 
+    int deadzone = 25;
 
     if (localSpeed > deadzone) {
       digitalWrite(IN1, HIGH);
       digitalWrite(IN2, LOW);
       pwmValue = map(localSpeed, deadzone, 255, PWM_START_POWER, PWM_MAX);
-    } 
+    }
     else if (localSpeed < -deadzone) {
       digitalWrite(IN1, LOW);
       digitalWrite(IN2, HIGH);
       pwmValue = map(abs(localSpeed), deadzone, 255, PWM_START_POWER, PWM_MAX);
-    } 
+    }
     else {
       digitalWrite(IN1, LOW);
       digitalWrite(IN2, LOW);
@@ -103,11 +140,11 @@ void motorTask(void *pvParameters) {
   }
 }
 
-// Zadanie 2: Obsługa WebSocket 
+// Zadanie 2: Obsługa WebSocket
 void webSocketTask(void *pvParameters) {
   for (;;) {
     webSocket.loop();
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(10)); 
   }
 }
 
@@ -115,6 +152,11 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
   if (type == WStype_TEXT) {
     StaticJsonDocument<200> doc;
     if (deserializeJson(doc, payload)) return;
+
+    if (doc.containsKey("sportMode")) {
+      applySportMode(doc["sportMode"].as<bool>());
+      return;
+    }
 
     xSemaphoreTake(dataMutex, portMAX_DELAY);
     currentSteering = doc["steering"] | 90;
@@ -124,43 +166,37 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
   }
 }
 
-// Strumieniowanie Kamery
 void handleStream() {
   WiFiClient client = server.client();
-  client.setNoDelay(true);
+  client.setNoDelay(true);   
 
-  String response =
+  server.sendContent(
     "HTTP/1.1 200 OK\r\n"
-    "Content-Type: multipart/x-mixed-replace; boundary=frame\r\n\r\n";
-
-  server.sendContent(response);
+    "Content-Type: multipart/x-mixed-replace; boundary=frame\r\n\r\n"
+  );
 
   while (client.connected()) {
-    camera_fb_t * fb = esp_camera_fb_get();
-    if (!fb) {
-      delay(100);
-      continue;
-    }
+    camera_fb_t* fb = esp_camera_fb_get();
+    if (!fb) continue;   
 
-    client.printf("--frame\r\n");
-    client.printf("Content-Type: image/jpeg\r\n");
-    client.printf("Content-Length: %u\r\n\r\n", fb->len);
+    client.printf("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n", fb->len);
     client.write(fb->buf, fb->len);
     client.printf("\r\n");
+    client.flush();      
 
     esp_camera_fb_return(fb);
-
-    if (!client.connected()) break;
-    delay(40);
+    delay(10);
   }
 }
- 
+
+
 void setup() {
   Serial.begin(115200);
 
   dataMutex = xSemaphoreCreateMutex();
   lastCommandTime = millis();
-// Konfiguracaj ustawień kamery
+
+  // Konfiguracja kamery 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -172,15 +208,22 @@ void setup() {
   config.pin_vsync = VSYNC_GPIO_NUM; config.pin_href = HREF_GPIO_NUM;
   config.pin_sccb_sda = SIOD_GPIO_NUM; config.pin_sccb_scl = SIOC_GPIO_NUM;
   config.pin_pwdn = PWDN_GPIO_NUM; config.pin_reset = RESET_GPIO_NUM;
-  config.xclk_freq_hz = 10000000; 
+  config.xclk_freq_hz = 20000000;  
   config.pixel_format = PIXFORMAT_JPEG;
   config.frame_size = FRAMESIZE_VGA;
-  config.jpeg_quality = 12;
-  config.fb_count = psramFound() ? 2 : 1; 
-  config.grab_mode = CAMERA_GRAB_LATEST; 
+  config.jpeg_quality = 20;        
+  config.fb_count = psramFound() ? 3 : 1; 
+  config.grab_mode = CAMERA_GRAB_LATEST;
   config.fb_location = CAMERA_FB_IN_PSRAM;
 
-  esp_camera_init(&config);
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK) {
+    Serial.printf("[CAM] Błąd inicjalizacji: 0x%x\n", err);
+    return;
+  }
+
+  // Domyślnie włączony tryb sportowy
+  applySportMode(true);
 
   servo.setPeriodHertz(50);
   servo.attach(servoPin, 500, 2400);
@@ -197,13 +240,16 @@ void setup() {
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid, password);
   WiFi.setSleep(false);
+  esp_wifi_set_ps(WIFI_PS_NONE); 
 
   server.on("/", []() { server.send_P(200, "text/html", webpage); });
   server.on("/stream", HTTP_GET, handleStream);
   server.begin();
-  
+
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
+
+  Serial.println("[BOOT] RC Car gotowy. IP: 192.168.4.1");
 }
 
 void loop() {
